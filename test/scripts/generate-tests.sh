@@ -4,7 +4,10 @@
 # Symlinks are underscore numbers.
 mkdir -p a/b/c/d
 touch a/1
+sleep 1
 touch a/2
+echo "preserves mode, ownership, timestamps for a/2 to a/3"
+cp -p a/2 a/3
 
 echo "Linking _1 to a relative path file"
 ln -s ../1 a/b/_1

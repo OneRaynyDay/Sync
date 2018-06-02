@@ -2,6 +2,7 @@
 
 bool check::diff(fs::path p1, fs::path p2){
     // One file exists and the other one no longer exists.
+    // if both files don't exist, then this should throw.
     if (fs::exists(p1) ^ fs::exists(p2))
         return true;
     // Both files exist but are different types.

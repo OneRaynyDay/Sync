@@ -14,8 +14,12 @@ test: diff-test
 	build/diff-test
 
 # ~~ INDIVIDUAL TESTS ~~
-diff-test: test/diff-test.cpp
-	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) -c test/diff-test.cpp -o build/diff-test
+# Include main-test.o in all *-test because we need catch.hpp's main to run.
+main-test.o: test/main-test.cpp
+	$(CC) $(FLAGS) -c test/main-test.cpp -o build/main-test.o
+
+diff-test: main-test.o diff.o test/diff-test.cpp 
+	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) build/main-test.o build/diff.o test/diff-test.cpp -o build/diff-test
 
 # ~~ .O FILE GENERATION ~~
 # MAIN ROUTINE
