@@ -5,6 +5,26 @@ What this is NOT:
 - this is not a general purpose rsync.
 - this is not meant to be performant(but isn't bad).
 
+# Install
+
+This requires the boost library, specifically `filesystem`. Because `filesystem` is not a headers-only library from boost, we need to install the object binary in order to proceed.
+
+No other requirements are necessary other than a recent _enough_ g++/clang compiler that supports at least c++11.
+
+To build from binary, simply run:
+
+```
+make
+```
+
+and to run all tests, run:
+
+```
+make
+```
+
+# Why?
+
 This addresses the **following "issues" that rsync has**:
 
 ## Correctness
