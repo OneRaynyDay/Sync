@@ -18,10 +18,9 @@ main-test.o: test/main-test.cpp
 	$(CC) $(FLAGS) -c test/main-test.cpp -o build/main-test.o
 
 %-test: build/main-test.o build/%.o test/%-test.cpp
-	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) $^ -o build/$*-test
-	build/$*-test
+	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) $^ -o build/$@
+	build/$@
 
 # ~~ .O FILE GENERATION ~~
-# MAIN ROUTINE
 build/%.o: src/%.cpp
-	$(CC) $(FLAGS) -c $^ -o $<
+	$(CC) $(FLAGS) -c $^ -o $@
