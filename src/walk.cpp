@@ -23,9 +23,26 @@ std::vector<fs::path> walk::realpath(const fs::path& p){
     return std::vector<fs::path>(s.begin(), s.end());
 }
 
-void walk::generate_walk(const fs::path& root, const fs::path& dst){
-    std::vector<fs::path> roots = walk::realpath(root); 
-    if(!fs::exists(dst))
-        return;
-    // TODO: Write the actual recursive copying code.
+bool walk::check_bounds(const fs::path& root, const fs::path& p){
+    return walk::weak_check_bounds(root, p) ||
+        walk::weak_check_bounds(fs::canonical(root), p);
 }
+
+bool walk::weak_check_bounds(const fs::path& root, const fs::path& p){
+    // "zip" two paths and check every element is the same.
+    auto rit = root.begin(), pit = p.begin();
+    for(; rit != root.end() && pit != p.end(); ++rit, ++pit){
+        if(*rit != *pit)
+           return false; 
+    }
+    return rit == root.end();
+}
+
+// void walk::generate_walk(const fs::path& src, const fs::path& dst,
+        // const fs::path& sp, const fs::path& dp){
+    // // We resolve SRC.
+    // std::vector<fs::path> roots = walk::realpath(src / sp);
+    //
+    // // Copy all entries of root first.
+    // // TODO: Check for symlink cycles
+// }

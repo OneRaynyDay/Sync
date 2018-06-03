@@ -25,7 +25,11 @@ int main(){
     for(auto x : v){
         std::cout << x << "..." << std::endl;
     }
-    std::cout << get_content("Makefile") << std::endl;
+    // std::cout << get_content("Makefile") << std::endl;
     // fs::copy_directory("a", "b");
     // std::cout << fs::exists("a") << fs::exists("bbb") << std::endl;
+    // for(auto it = p.begin(); it != p.end(); it++){
+        // std::cout << *it << std::endl;
+    // }
+    std::cout << fs::canonical("a/b/_4") << "\n" << fs::weakly_canonical("a/b/_4") << std::endl;
 }
