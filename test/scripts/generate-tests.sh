@@ -16,3 +16,5 @@ ln -s $PWD/a/2 a/b/_2
 ln -s c a/b/_3
 # Linking _4 to an earlier directory
 ln -s .. a/b/_4
+# Linking _5 to a nonexistent directory
+ln -s a/b/c/d a/b/_5

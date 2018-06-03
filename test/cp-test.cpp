@@ -29,6 +29,11 @@ TEST_CASE( "cp::copy_entry correctly copies.", "[cp::copy_entry]" ){
         REQUIRE(fs::read_symlink("a/b/_4") == "..");
         REQUIRE(fs::read_symlink("a/_4") == "..");
     }
+    SECTION( "cp::copy_entry correctly copies a symlink that points to nothing." ){
+        REQUIRE(cp::copy_entry("a/b/_5", "a/_5"));
+        REQUIRE(fs::read_symlink("a/b/_5") == "a/b/c/d");
+        REQUIRE(fs::read_symlink("a/_5") == "a/b/c/d");
+    }
     SECTION( "cp::copy_entry correctly takes an absolute symlink and turns it to relative." ){
         REQUIRE(cp::copy_entry("a/b/_2", "a/_2"));
         REQUIRE(fs::read_symlink("a/_2") == "../2");
