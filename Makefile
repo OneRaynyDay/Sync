@@ -7,7 +7,7 @@ FLAGS = $(DEBUG_FLAGS) $(CPP_VER)
 run: build
 	build/main
 
-build: build/walk.o build/diff.o build/main.o
+build: build/cp.o build/walk.o build/diff.o build/main.o
 	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) -o build/main $^ 
 
 test: diff-test walk-test cp-test
@@ -24,3 +24,7 @@ build/main-test.o: test/main-test.cpp
 # ~~ .O FILE GENERATION ~~
 build/%.o: src/%.cpp
 	$(CC) $(FLAGS) -c $^ -o $@
+
+# ~~ CLEANING ~~
+clean: 
+	rm -r build/*

@@ -30,19 +30,21 @@ bool walk::check_bounds(const fs::path& root, const fs::path& p){
 
 bool walk::weak_check_bounds(const fs::path& root, const fs::path& p){
     // "zip" two paths and check every element is the same.
-    auto rit = root.begin(), pit = p.begin();
-    for(; rit != root.end() && pit != p.end(); ++rit, ++pit){
+    fs::path absr = fs::absolute(root);
+    fs::path absp = fs::absolute(p);
+    auto rit = absr.begin(), pit = absp.begin();
+    for(; rit != absr.end() && pit != absp.end(); ++rit, ++pit){
         if(*rit != *pit)
            return false; 
     }
-    return rit == root.end();
+    return rit == absr.end();
 }
 
-// void walk::generate_walk(const fs::path& src, const fs::path& dst,
-        // const fs::path& sp, const fs::path& dp){
-    // // We resolve SRC.
-    // std::vector<fs::path> roots = walk::realpath(src / sp);
-    //
-    // // Copy all entries of root first.
-    // // TODO: Check for symlink cycles
-// }
+void walk::generate_walk(const fs::path& src, const fs::path& dst,
+        const fs::path& sp, const fs::path& dp){
+    // We resolve SRC.
+    std::vector<fs::path> roots = walk::realpath(src / sp);
+
+    // Copy all entries of root first.
+    // TODO: Check for symlink cycles
+}

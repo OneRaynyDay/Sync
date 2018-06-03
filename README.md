@@ -20,7 +20,7 @@ make
 and to run all tests, run:
 
 ```
-make
+make test
 ```
 
 # Why?

@@ -2,6 +2,7 @@
 #include <boost/filesystem.hpp>
 #include "diff.h"
 #include "walk.h"
+#include "cp.h"
 namespace fs = boost::filesystem;
 
 void listFiles(fs::path d){
@@ -31,5 +32,7 @@ int main(){
     // for(auto it = p.begin(); it != p.end(); it++){
         // std::cout << *it << std::endl;
     // }
-    std::cout << fs::canonical("a/b/_4") << "\n" << fs::weakly_canonical("a/b/_4") << std::endl;
+    // std::cout << fs::canonical("a/b/_4") << "\n" << fs::weakly_canonical("a/b/_4") << std::endl;
+    // fs::create_symlink("a/10", "a/9");
+    std::cout << fs::relative("/Users/dev/home/cpp/sync/a/2", fs::path("a/b/_2").parent_path()) << std::endl;
 }

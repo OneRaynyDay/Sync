@@ -39,7 +39,7 @@ bool check_bounds(const fs::path& root, const fs::path& p);
 // if they don't yet exist.
 //
 // POLICY REGARDING SYMLINKS:
-// - If at any point the symlinks point out of SRC, then we throw an exception.
+// - If at any point we are out of bounds of src_root, then we throw an exception.
 //
 // Example:
 // SRC/a/b/c -> DST/a/b/c

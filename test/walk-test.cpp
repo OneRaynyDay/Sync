@@ -55,7 +55,6 @@ TEST_CASE( "walk::realpath correctly decomposes symlink paths.", "[walk::realpat
 }
 
 TEST_CASE( "walk::weak_check_bounds correctly checks bounds of files.", "[walk::weak_check_bounds]" ){
-
     system("test/scripts/generate-tests.sh");
     SECTION( "walk::weak_check_bounds checks a file is in a directory." ){
         REQUIRE(walk::weak_check_bounds("a", "a/b"));
@@ -64,8 +63,32 @@ TEST_CASE( "walk::weak_check_bounds correctly checks bounds of files.", "[walk::
     SECTION( "walk::weak_check_bounds checks a file is not in a directory." ){
         REQUIRE(!walk::weak_check_bounds("a/b", "a"));
     }
-    SECTION( "walk::weak_check_Bounds checks a file is the directory." ){
+    SECTION( "walk::weak_check_bounds checks a file is the directory." ){
         REQUIRE(walk::weak_check_bounds("a/b", "a/b"));
+    }
+    system("test/scripts/cleanup.sh");
+}
+
+TEST_CASE( "walk::check_bounds correctly checks bounds of files with symlinks.", "[walk::check_bounds]" ){
+    system("test/scripts/generate-tests.sh");
+    SECTION( "walk::check_bounds checks a file is in a directory." ){
+        REQUIRE(walk::check_bounds("a", "a/b"));
+        REQUIRE(walk::check_bounds("a", "a/b/c"));
+    }
+    SECTION( "walk::check_bounds checks a file is not in a directory." ){
+        REQUIRE(!walk::check_bounds("a/b", "a"));
+    }
+    SECTION( "walk::check_bounds checks a file is the directory." ){
+        REQUIRE(walk::check_bounds("a/b", "a/b"));
+    }
+    SECTION( "walk::check_bounds checks a file is in canonical(directory)." ){
+        REQUIRE(walk::check_bounds("a/b/_4", "a"));
+    }
+    SECTION( "walk::check_bounds checks a file is appropriately not in canonical(file)." ){
+        REQUIRE(!walk::check_bounds("a/b/_1", "a"));
+    }
+    SECTION( "walk::check_bounds checks a file is appropriately not in absolute canonical(file)." ){
+        REQUIRE(!walk::check_bounds("a/b/_2", "a"));
     }
     system("test/scripts/cleanup.sh");
 }
