@@ -14,5 +14,5 @@ std::vector<fs::path> realpath(const fs::path& p);
 
 // We need to recursively walk two folders in parallel and create files
 // if they don't yet exist.
-void generate_walk(const fs::path& root);
+void generate_walk(const fs::path& src, const fs::path& dst);
 }

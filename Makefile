@@ -10,11 +10,11 @@ run: build
 build: build/walk.o build/diff.o build/main.o
 	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) -o build/main $^ 
 
-test: diff-test walk-test
+test: diff-test walk-test cp-test
 
 # ~~ INDIVIDUAL TESTS ~~
 # Include main-test.o in all *-test because we need catch.hpp's main to run.
-main-test.o: test/main-test.cpp
+build/main-test.o: test/main-test.cpp
 	$(CC) $(FLAGS) -c test/main-test.cpp -o build/main-test.o
 
 %-test: build/main-test.o build/%.o test/%-test.cpp

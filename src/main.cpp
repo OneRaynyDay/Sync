@@ -11,6 +11,11 @@ void listFiles(fs::path d){
     }
 }
 
+std::string get_content(const std::string& fname){
+    std::ifstream f(fname);
+    return std::string( (std::istreambuf_iterator<char>(f)),
+                        (std::istreambuf_iterator<char>()));
+}
 
 int main(){
     std::cout << check::diff("test", "test") << std::endl;
@@ -20,4 +25,7 @@ int main(){
     for(auto x : v){
         std::cout << x << "..." << std::endl;
     }
+    std::cout << get_content("Makefile") << std::endl;
+    // fs::copy_directory("a", "b");
+    // std::cout << fs::exists("a") << fs::exists("bbb") << std::endl;
 }

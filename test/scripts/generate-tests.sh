@@ -4,7 +4,7 @@
 # Symlinks are underscore numbers.
 mkdir -p a/b/c/d
 touch -m -t 203801181205.09 a/1
-touch a/2
+echo "Hello world!" > a/2
 # preserves mode, ownership, timestamps for a/2 to a/3
 cp -p a/2 a/3
 

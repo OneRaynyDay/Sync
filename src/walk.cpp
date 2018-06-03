@@ -1,5 +1,6 @@
 #include "walk.h"
 #include <iostream>
+#include <cassert>
 
 std::vector<fs::path> walk::realpath(const fs::path& p){
     // There is a possibility that the symlinks may be
@@ -20,4 +21,11 @@ std::vector<fs::path> walk::realpath(const fs::path& p){
     // Add the last file regardless of whether it's a symlink.
     s.insert(root);
     return std::vector<fs::path>(s.begin(), s.end());
+}
+
+void walk::generate_walk(const fs::path& root, const fs::path& dst){
+    std::vector<fs::path> roots = walk::realpath(root); 
+    if(!fs::exists(dst))
+        return;
+    // TODO: Write the actual recursive copying code.
 }
