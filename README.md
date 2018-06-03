@@ -5,7 +5,7 @@ What this is NOT:
 - this is not a general purpose rsync.
 - this is not meant to be performant(but isn't bad).
 
-This addresses the following issues:
+This addresses the **following "issues" that rsync has**:
 
 ## Correctness
 

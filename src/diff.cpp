@@ -1,6 +1,6 @@
 #include "diff.h"
 
-bool check::diff(fs::path p1, fs::path p2){
+bool check::diff(const fs::path& p1, const fs::path& p2){
     // One file exists and the other one no longer exists.
     // if both files don't exist, then this should throw.
     if (fs::exists(p1) ^ fs::exists(p2))
