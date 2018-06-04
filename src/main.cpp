@@ -38,13 +38,14 @@ int main(){
     // fs::create_symlink("a/10", "a/9");
     std::cout << fs::relative("/Users/dev/home/cpp/sync/a/2", fs::path("a/b/_2").parent_path()) << std::endl;
     fs::directory_iterator end = fs::directory_iterator();
-    for(fs::directory_iterator it("a/b"); it != end; ++it){
-        std::cout << ":O : " << *it << std::endl;
-    }
-    try{
-        walk::generate_walk( "", "", "a", "b");
-    }
-    catch(const char* s){
-        std::cout << s << std::endl;
-    } 
+    // for(fs::directory_iterator it("a/b"); it != end; ++it){
+        // std::cout << ":O : " << *it << std::endl;
+    // }
+    // try{
+        // walk::generate_walk( "", "", "a", "b");
+    // }
+    // catch(const char* s){
+        // std::cout << s << std::endl;
+    // }
+    std::cout << fs::exists(fs::absolute(fs::path(""))) << std::endl;
 }

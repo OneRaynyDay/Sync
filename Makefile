@@ -17,6 +17,11 @@ test: diff-test walk-test cp-test
 build/main-test.o: test/main-test.cpp
 	$(CC) $(FLAGS) -c test/main-test.cpp -o build/main-test.o
 
+# Specific tests that require extra dependencies
+walk-test: build/main-test.o build/walk.o build/cp.o test/walk-test.cpp
+	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) $^ -o build/$@
+	build/$@
+
 %-test: build/main-test.o build/%.o test/%-test.cpp
 	$(CC) $(FLAGS) $(BOOST_LINK_FLAGS) $^ -o build/$@
 	build/$@

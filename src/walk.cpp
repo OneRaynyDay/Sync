@@ -73,6 +73,7 @@ void walk::generate_walk(const fs::path& src, const fs::path& dst,
         if(fs::equivalent(root_path, sp))
             continue;
         auto dst_path = walk::replace_prefix(root_path, src, dst);
+        std::cout << root_path << std::endl;
         cp::copy_entry(root_path, dst_path);
     }
 
@@ -84,8 +85,8 @@ void walk::generate_walk(const fs::path& src, const fs::path& dst,
         if(stat.type() == fs::file_not_found){
             throw "walk::generate_walk::recurse_make - error, could not read file";
         }
-        std::cout << "COPYING : " << spath << " TO : " << dpath << std::endl;
         cp::copy_entry(spath, dpath);
+        // This is a leaf node.
         if(!fs::is_directory(stat))
             return;
         const auto& end = fs::directory_iterator();

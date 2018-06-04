@@ -37,7 +37,6 @@ bool weak_check_bounds(const fs::path& root, const fs::path& p);
 bool check_bounds(const fs::path& root, const fs::path& p);
 
 // Replace the prefix of a path given the src and dst.
-// Assumes all inputs are absolute paths.
 fs::path replace_prefix(const fs::path& p, const fs::path& orig_root, const fs::path& new_root);
 
 // We need to recursively walk two folders in parallel and create files
