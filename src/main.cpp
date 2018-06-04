@@ -4,7 +4,9 @@
 #include "walk.h"
 #include "cp.h"
 namespace fs = boost::filesystem;
-
+/**
+ * Just a sandbox. Disregard.
+ */
 void listFiles(fs::path d){
     fs::directory_iterator end;
     for(fs::directory_iterator it(d); it != end; ++it){
@@ -39,5 +41,10 @@ int main(){
     for(fs::directory_iterator it("a/b"); it != end; ++it){
         std::cout << ":O : " << *it << std::endl;
     }
-    walk::generate_walk( ".", ".", "a", "b");
+    try{
+        walk::generate_walk( "", "", "a", "b");
+    }
+    catch(const char* s){
+        std::cout << s << std::endl;
+    } 
 }

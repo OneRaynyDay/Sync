@@ -43,13 +43,15 @@ bool walk::weak_check_bounds(const fs::path& root, const fs::path& p){
     return rit == absr.end();
 }
 
-// Assumes p, orig_root, new_root are all absolute.
 fs::path walk::replace_prefix(const fs::path& p, const fs::path& orig_root, const fs::path& new_root){
+    const fs::path& absp = fs::absolute(p);
+    const fs::path& abs_orig_root = fs::absolute(orig_root);
     fs::path cur;
     bool changed_root = false;
-    for (const auto& part : p){
+    for (const auto& part : absp){
         cur /= part;
-        if(cur == orig_root){
+        // TODO: Make sure equivalent here doesn't break symlinks.
+        if(fs::equivalent(cur, abs_orig_root)){
             cur = new_root; 
             changed_root = true;
         }
@@ -59,6 +61,7 @@ fs::path walk::replace_prefix(const fs::path& p, const fs::path& orig_root, cons
     return cur;
 }
 
+// TODO: Add tests.
 void walk::generate_walk(const fs::path& src, const fs::path& dst,
         const fs::path& sp, const fs::path& dp){
     // We resolve src.
@@ -67,6 +70,8 @@ void walk::generate_walk(const fs::path& src, const fs::path& dst,
     for (const auto& root_path : roots){
         if(!check_bounds(src, root_path))
             throw "walk::generate_walk - the sp has symlinks pointing to files outside of src.";
+        if(fs::equivalent(root_path, sp))
+            continue;
         auto dst_path = walk::replace_prefix(root_path, src, dst);
         cp::copy_entry(root_path, dst_path);
     }
@@ -79,15 +84,15 @@ void walk::generate_walk(const fs::path& src, const fs::path& dst,
         if(stat.type() == fs::file_not_found){
             throw "walk::generate_walk::recurse_make - error, could not read file";
         }
+        std::cout << "COPYING : " << spath << " TO : " << dpath << std::endl;
         cp::copy_entry(spath, dpath);
         if(!fs::is_directory(stat))
             return;
         const auto& end = fs::directory_iterator();
         // Recursively call recurse_make
-        // TODO: finish this
         for(fs::directory_iterator it(spath); it != end; ++it){
             const auto& next_spath = (*it).path();
-            const auto& next_dpath = next_spath.filename();
+            const auto& next_dpath = dpath / next_spath.filename();
             recurse_make(next_spath, next_dpath);
         }
     };
