@@ -2,6 +2,7 @@
 #include <boost/filesystem.hpp>
 #include <vector>
 #include <set>
+#include "cp.h"
 namespace fs = boost::filesystem;
 
 namespace walk{
@@ -34,6 +35,10 @@ bool weak_check_bounds(const fs::path& root, const fs::path& p);
 // check_bounds employs the above algorithm in both
 // canonical form and regular form.
 bool check_bounds(const fs::path& root, const fs::path& p);
+
+// Replace the prefix of a path given the src and dst.
+// Assumes all inputs are absolute paths.
+fs::path replace_prefix(const fs::path& p, const fs::path& orig_root, const fs::path& new_root);
 
 // We need to recursively walk two folders in parallel and create files
 // if they don't yet exist.

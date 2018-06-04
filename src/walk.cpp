@@ -2,13 +2,16 @@
 #include <iostream>
 #include <cassert>
 
+// TODO: Replace string throws with class throws
+
+// Returns all ABSOLUTE paths.
 std::vector<fs::path> walk::realpath(const fs::path& p){
     // There is a possibility that the symlinks may be
     // cyclic. Therefore we need a set for uniqueness.
     std::set<fs::path> s;
     fs::path absp = fs::absolute(p);
     fs::path root;
-    for(auto& part : absp){
+    for(const auto& part : absp){
         root /= part; 
         // if the root currently is a symlink,
         // then we need to add it to our list.
@@ -40,11 +43,53 @@ bool walk::weak_check_bounds(const fs::path& root, const fs::path& p){
     return rit == absr.end();
 }
 
+// Assumes p, orig_root, new_root are all absolute.
+fs::path walk::replace_prefix(const fs::path& p, const fs::path& orig_root, const fs::path& new_root){
+    fs::path cur;
+    bool changed_root = false;
+    for (const auto& part : p){
+        cur /= part;
+        if(cur == orig_root){
+            cur = new_root; 
+            changed_root = true;
+        }
+    }
+    if(!changed_root)
+        throw "walk::replace_prefix - are you sure you inputted the orig_root & p correctly?";
+    return cur;
+}
+
 void walk::generate_walk(const fs::path& src, const fs::path& dst,
         const fs::path& sp, const fs::path& dp){
-    // We resolve SRC.
-    std::vector<fs::path> roots = walk::realpath(src / sp);
+    // We resolve src.
+    std::vector<fs::path> roots = walk::realpath(sp);
+    // Make sure nothing is outside of src.
+    for (const auto& root_path : roots){
+        if(!check_bounds(src, root_path))
+            throw "walk::generate_walk - the sp has symlinks pointing to files outside of src.";
+        auto dst_path = walk::replace_prefix(root_path, src, dst);
+        cp::copy_entry(root_path, dst_path);
+    }
 
-    // Copy all entries of root first.
+    // Copy all recursive entries.
     // TODO: Check for symlink cycles
+    std::function<void(const fs::path&, const fs::path&)> recurse_make = 
+    [&](const fs::path& spath, const fs::path& dpath){
+        const auto& stat = fs::symlink_status(spath); 
+        if(stat.type() == fs::file_not_found){
+            throw "walk::generate_walk::recurse_make - error, could not read file";
+        }
+        cp::copy_entry(spath, dpath);
+        if(!fs::is_directory(stat))
+            return;
+        const auto& end = fs::directory_iterator();
+        // Recursively call recurse_make
+        // TODO: finish this
+        for(fs::directory_iterator it(spath); it != end; ++it){
+            const auto& next_spath = (*it).path();
+            const auto& next_dpath = next_spath.filename();
+            recurse_make(next_spath, next_dpath);
+        }
+    };
+    recurse_make(sp, dp);
 }
