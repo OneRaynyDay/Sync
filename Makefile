@@ -1,6 +1,6 @@
 CC = g++
 BOOST_LINK_FLAGS = -lboost_system -lboost_filesystem -I /usr/local/Cellar/boost/1.65.0
-DEBUG_FLAGS = -Wall -g -Werror
+DEBUG_FLAGS = -Wall -ggdb -Werror
 CPP_VER = -std=c++11
 FLAGS = $(DEBUG_FLAGS) $(CPP_VER)
 

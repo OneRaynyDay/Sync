@@ -132,7 +132,7 @@ TEST_CASE( "walk::generate_walk successfully generates a copy.", "[walk::generat
         // b/b/jump
         // b/b/c/d/e/f/1
         // b/b/c/d/e/f/g
-        walk::generate_walk("a", "", "a/b/jump/f", "b");
+        walk::generate_walk("a", "a/b/jump/f", "b");
     }
     // SECTION( "walk::generate_walk syncs a to (symlinks on path b)." ){
         // // TODO

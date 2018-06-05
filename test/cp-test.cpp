@@ -53,3 +53,13 @@ TEST_CASE( "cp::copy_entry correctly copies.", "[cp::copy_entry]" ){
     }
     system("test/scripts/cleanup.sh");
 }
+
+// TODO: Add more tests
+TEST_CASE( "cp::recursive_copy_entry correctly copies all incremental dirs.", "[cp::recursive_copy_entry]" ){
+    system("test/scripts/generate-tests.sh");
+    SECTION( "cp::recursive_copy_entry correctly copies a file nested within uncreated directories." ){
+        REQUIRE(cp::recursive_copy_entry("a/b/c/d/e/f/1", "b/b/c/d/e/f/1"));
+        REQUIRE(fs::exists("b/b/c/d/e/f/1"));
+    }
+    system("test/scripts/cleanup.sh");
+}

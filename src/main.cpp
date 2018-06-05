@@ -24,7 +24,7 @@ int main(){
     std::cout << check::diff("test", "test") << std::endl;
     std::cout << check::diff("test", "not a thing") << std::endl;
     fs::path p("a/b/_4/b/_4/b/_4/1");
-    auto v = walk::realpath(p);
+    auto v = cp::realpath(p);
     for(auto x : v){
         std::cout << x << "..." << std::endl;
     }
@@ -47,5 +47,6 @@ int main(){
     // catch(const char* s){
         // std::cout << s << std::endl;
     // }
-    std::cout << fs::exists(fs::absolute(fs::path(""))) << std::endl;
+    // std::cout << fs::exists(fs::absolute(fs::path(""))) << std::endl;
+    // fs::create_directory("build/main.o");
 }

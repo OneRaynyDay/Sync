@@ -4,28 +4,6 @@
 
 // TODO: Replace string throws with class throws
 
-// Returns all ABSOLUTE paths.
-std::vector<fs::path> walk::realpath(const fs::path& p){
-    // There is a possibility that the symlinks may be
-    // cyclic. Therefore we need a set for uniqueness.
-    std::set<fs::path> s;
-    fs::path absp = fs::absolute(p);
-    fs::path root;
-    for(const auto& part : absp){
-        root /= part; 
-        // if the root currently is a symlink,
-        // then we need to add it to our list.
-        if (fs::is_symlink(root)){
-            s.insert(root);
-            // Now we start at the canonical path.
-            root = fs::canonical(root);
-        }
-    }
-    // Add the last file regardless of whether it's a symlink.
-    s.insert(root);
-    return std::vector<fs::path>(s.begin(), s.end());
-}
-
 bool walk::check_bounds(const fs::path& root, const fs::path& p){
     return walk::weak_check_bounds(root, p) ||
         walk::weak_check_bounds(fs::canonical(root), p);
@@ -62,21 +40,24 @@ fs::path walk::replace_prefix(const fs::path& p, const fs::path& orig_root, cons
 }
 
 // TODO: Add tests.
-void walk::generate_walk(const fs::path& src, const fs::path& dst,
-        const fs::path& sp, const fs::path& dp){
+void walk::generate_walk(const fs::path& src, const fs::path& sp, const fs::path& dst){
+    // TODO: delete this flush
+    std::cout << std::unitbuf; 
     // We resolve src.
-    std::vector<fs::path> roots = walk::realpath(sp);
+    std::vector<fs::path> roots = cp::realpath(sp);
     // Make sure nothing is outside of src.
     for (const auto& root_path : roots){
+        std::cout << root_path << std::endl;
         if(!check_bounds(src, root_path))
             throw "walk::generate_walk - the sp has symlinks pointing to files outside of src.";
+        // TODO: equivalent probably resolves symlinks
         if(fs::equivalent(root_path, sp))
             continue;
         auto dst_path = walk::replace_prefix(root_path, src, dst);
-        std::cout << root_path << std::endl;
-        cp::copy_entry(root_path, dst_path);
+        cp::recursive_copy_entry(root_path, dst_path);
     }
 
+    std::cout << "recursion starting" << std::endl;
     // Copy all recursive entries.
     // TODO: Check for symlink cycles
     std::function<void(const fs::path&, const fs::path&)> recurse_make = 
@@ -85,6 +66,7 @@ void walk::generate_walk(const fs::path& src, const fs::path& dst,
         if(stat.type() == fs::file_not_found){
             throw "walk::generate_walk::recurse_make - error, could not read file";
         }
+
         cp::copy_entry(spath, dpath);
         // This is a leaf node.
         if(!fs::is_directory(stat))
@@ -97,5 +79,7 @@ void walk::generate_walk(const fs::path& src, const fs::path& dst,
             recurse_make(next_spath, next_dpath);
         }
     };
+
+    auto dp = walk::replace_prefix(sp, src, dst);
     recurse_make(sp, dp);
 }
