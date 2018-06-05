@@ -1,3 +1,5 @@
+// Set to 0 if turn off debug
+#define DEBUG(x) do { if(0) std::cerr << x << std::endl; } while (0)
 #include "cp.h"
 #include <iostream>
 #include <cassert>
@@ -9,6 +11,7 @@ std::vector<fs::path> cp::realpath(const fs::path& p){
     // cyclic. Therefore we need a set for uniqueness.
     std::set<fs::path> s;
     fs::path absp = fs::absolute(p);
+    DEBUG("Absolute root path : " << absp << " from " << p);
     fs::path root;
     for(const auto& part : absp){
         root /= part; 
@@ -36,25 +39,41 @@ bool cp::copy_entry(const fs::path& _from, const fs::path& _to, fs::copy_option 
     if(stat.type() == fs::file_not_found || fs::is_other(stat))
         return false;
      
-    std::cout << "Copying from " << from << " to " << to << std::endl;
+    // DEBUG("Copying from " << from << " to " << to);
     if(fs::is_regular_file(stat)){
         fs::copy_file(from, to, opt);
     }
     else if(fs::is_symlink(stat)){
+        DEBUG("It's a symlink" << to);
         // Change all absolute links into relative links. 
         fs::path ref = fs::read_symlink(from);
         if(ref.is_absolute()) 
             ref = fs::relative(ref, from.parent_path()); 
         // Change symlink referent of new symlink at to
         fs::create_symlink(ref, to);
-        // And then, add the referent.
-        fs::path canon_from_link = fs::canonical(from.parent_path() / ref);
+        // And then, add the referent IFF it is DIRECTORY THAT EXISTS.
+        fs::path canon_from_link = fs::weakly_canonical(from.parent_path() / ref);
         fs::path canon_to_link = fs::weakly_canonical(to.parent_path() / ref);
-        std::cout << canon_from_link << canon_to_link << std::endl;
-        cp::copy_entry(canon_from_link, canon_to_link); 
+        // DEBUG(canon_from_link << canon_to_link);
+        // Because our objective is to copy the SYMLINK, we are not necessarily
+        // obligated to copy the referent. If the referent already exists, then
+        // we should not throw an error, and if it's a file, then it should get
+        // picked up anyways later on.
+        // TODO: HARD PROBLEM: COPY OR NOT REFERENT? ITS A BANDAID FOR NOW.
+        if(!fs::exists(canon_to_link) 
+                && fs::exists(canon_from_link) 
+                && fs::is_directory(canon_from_link)){
+            DEBUG("We are copying " << canon_from_link << " to " << canon_to_link);
+            cp::copy_entry(canon_from_link, canon_to_link);
+        }
     }
     else if(fs::is_directory(stat)){
-        fs::create_directories(to);
+        // If we don't supply a canonical path, then we will try to
+        // overwrite directory symlinks that already exist
+        // and this will throw.
+        // Weakly canonical is used because to does not exist yet.
+        DEBUG("Before weakly canonicalizing dir" << to);
+        fs::create_directories(fs::weakly_canonical(to));
     }
     else{
         throw "cp::copy_entry - the file type is new and caused this crash.";
