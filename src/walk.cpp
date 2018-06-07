@@ -41,6 +41,21 @@ fs::path walk::replace_prefix(const fs::path& p, const fs::path& orig_root, cons
     return cur;
 }
 
+void make_if_not_exist(const fs::path& from, const fs::path& to){
+    if(!fs::exists(to)){
+        DEBUG("Does not exist. Making one:" << to);
+        std::vector<fs::path> roots = cp::realpath(from);
+        for (const auto& root_path : roots){
+            fs::path curf, curt;
+            // TODO: Give a good guarrantee on why this would work
+            DEBUG("Root path : " << root_path << " to path : " << to);
+            cp::get_base(root_path, to, curf, curt);
+            auto dst_path = walk::replace_prefix(root_path, curf, curt);
+            DEBUG("Recursive copying from" << root_path << " to " << dst_path);
+            cp::copy_entry(root_path, dst_path);
+        }
+    }
+}
 // TODO: Add tests.
 void walk::generate_walk(const fs::path& src, const fs::path& sp, const fs::path& dst){
     // TODO: delete this flush
@@ -86,6 +101,7 @@ void walk::generate_walk(const fs::path& src, const fs::path& sp, const fs::path
             throw "walk::generate_walk::recurse_make - error, could not read file";
         }
 
+        // TODO: make_if_not_exists here
         cp::copy_entry(spath, dpath);
         visited.insert(dpath);
         // This is a leaf node.

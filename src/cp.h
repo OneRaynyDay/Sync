@@ -5,6 +5,7 @@
 #include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
+namespace errc = boost::system::errc;
 
 // Some required forward decls:
 namespace walk{
@@ -13,6 +14,10 @@ bool check_bounds(const fs::path& root, const fs::path& p);
 
 // This module is for the bulk of the file and directory copying.
 namespace cp{
+// Determines whether to take action depending on the
+// error code generated from boost.
+void handle_io_errors(const boost::system::error_code&);
+
 // We need to resolve symlinks of a path, especially the initial path.
 // We will reduce the path into a vector of paths that need to be included
 // to accurately represent the symlink path.
@@ -30,6 +35,9 @@ std::vector<fs::path> realpath(const fs::path& p);
 // that the referent will also be copied into the correct location.
 // We will change ALL ABSOLUTE LINKS INTO RELATIVE LINKS.
 bool copy_entry(const fs::path& from, const fs::path& to, fs::copy_option opt = fs::copy_option::fail_if_exists);
+
+// TODO: test this
+fs::path get_base(const fs::path& from, const fs::path& to, fs::path& from_root, fs::path& to_root);
 
 // TODO: test this
 // Creates directories up to path.

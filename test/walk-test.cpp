@@ -66,38 +66,60 @@ TEST_CASE( "walk::replace_prefix replaces the stem of a path.", "[walk::replace_
     system("test/scripts/cleanup.sh");
 }
 
+void check_exist_files(){
+    REQUIRE(fs::exists("b/a/"));
+    REQUIRE(fs::exists("b/a/1"));
+    REQUIRE(fs::exists("b/a/2"));
+    REQUIRE(fs::exists("b/a/3"));
+    REQUIRE(fs::exists("b/a/b"));
+    REQUIRE(fs::exists("b/a/b/_1"));
+    REQUIRE(fs::exists("b/a/b/_2"));
+    REQUIRE(fs::exists("b/a/b/_3"));
+    REQUIRE(fs::exists("b/a/b/_4"));
+    REQUIRE(!fs::exists("b/a/b/a/b/c/d"));
+    REQUIRE(fs::exists("b/a/b/c/d/e/f/g"));
+    REQUIRE(fs::exists("b/a/b/c/d/e/f/1"));
+}
+
 TEST_CASE( "walk::generate_walk successfully generates a copy.", "[walk::generate_walk]" ){
     system("test/scripts/generate-tests.sh");
-    SECTION( "walk::generate_walk syncs a to b." ){
-        walk::generate_walk("", "a", "b");
-    }
-    SECTION( "walk::generate_walk syncs a to absolute path b." ){
-        walk::generate_walk("", "a", fs::absolute("b"));
-    }
-    SECTION( "walk::generate_walk syncs absolute path a to b." ){
-        walk::generate_walk("", fs::absolute("a"), "b");
-    }
-    SECTION( "walk::generate_walk syncs a AND b as an absolute path." ){
-        walk::generate_walk("", fs::absolute("a"), fs::absolute("b"));
-    }
-    SECTION( "walk::generate_walk syncs (symlinks on path a) to b." ){
-        walk::generate_walk("a/b/_4/b/_4", fs::absolute("a/b"), fs::absolute("b"));
-    }
+    // SECTION( "walk::generate_walk syncs a to b." ){
+        // walk::generate_walk("", "a", "b");
+        // check_exist_files();
+    // }
+    // SECTION( "walk::generate_walk syncs a to absolute path b." ){
+        // walk::generate_walk("", "a", fs::absolute("b"));
+        // check_exist_files();
+    // }
+    // SECTION( "walk::generate_walk syncs absolute path a to b." ){
+        // walk::generate_walk("", fs::absolute("a"), "b");
+        // check_exist_files();
+    // }
+    // SECTION( "walk::generate_walk syncs a AND b as an absolute path." ){
+        // walk::generate_walk("", fs::absolute("a"), fs::absolute("b"));
+        // check_exist_files();
+    // }
+    // SECTION( "walk::generate_walk syncs (symlinks on path a) to b." ){
+        // walk::generate_walk("a/b/_4/b/_4", fs::absolute("a/b"), fs::absolute("b"));
+    // }
     SECTION( "walk::generate_walk syncs with weird jumping symlinks on path." ){
         // We want the resulting structure in b:
         // b/b/jump
         // b/b/c/d/e/f/1
         // b/b/c/d/e/f/g
         walk::generate_walk("a", "a/b/jump/f", "b");
+        REQUIRE(fs::exists("b/b/jump"));
+        REQUIRE(fs::exists("b/b/c/d/e/f/1"));
+        REQUIRE(fs::exists("b/b/c/d/e/f/g"));
     }
-    SECTION( "walk::generate_walk syncs a to (symlink b), and does not run into inf loop." ){
-        CHECK_THROWS(walk::generate_walk("", "a", "a/b/jump/f/g"));
-    }
-    SECTION( "walk::generate_walk rightfully rejects when symlinks point out of root." ){
-        CHECK_THROWS(walk::generate_walk("a/b", "a/b/_4", "b"));
-    }
-    SECTION( "walk::generate_walk rightfully rejects when symlinks point out of root." ){
-        walk::generate_walk("a/b", "a/b", "b");
-    }
+    // SECTION( "walk::generate_walk syncs a to (symlink b), and does not run into inf loop." ){
+        // CHECK_THROWS(walk::generate_walk("", "a", "a/b/jump/f/g"));
+    // }
+    // SECTION( "walk::generate_walk rightfully rejects when symlinks point out of root." ){
+        // CHECK_THROWS(walk::generate_walk("a/b", "a/b/_4", "b"));
+    // }
+    // SECTION( "walk::generate_walk rightfully rejects when symlinks point out of root." ){
+        // CHECK_THROWS(walk::generate_walk("a/b", "a/b", "b"));
+    // }
     system("test/scripts/cleanup.sh");
 }
